@@ -798,6 +798,120 @@ floor_brick:
 	add sp, sp, #24
 	br lr
 
+double_floor_brick:
+	sub sp, sp, #16
+	str lr, [sp, #8]
+	str x4, [sp]
+	ldr x4, floor_size
+	bl floor_brick
+	lsl x4, x4, #2
+	add x2, x2, x4
+	bl floor_brick
+	sub x2, x2, x4
+	ldur lr, [sp, #8]
+	ldur x4, [sp]
+	add sp, sp, #16
+	br lr
+	
+
+draw_backround:
+	sub sp, sp, #40
+	str lr, [sp, #32]
+	str x1, [sp, #24]
+	str x2, [sp, #16]
+	str x4, [sp, #8]
+	str x5, [sp]
+	mov x21, x3
+	ldr x3, colorBlueSky
+	mov x1, #0
+	mov x2, #0
+	mov x4, SCREEN_WIDTH
+	mov x5, SCREEN_HEIGH
+	bl draw_rectangle
+	ldur lr, [sp, #32]
+	ldur x1, [sp, #24]
+	ldur x2, [sp, #16]
+	ldur x4, [sp, #8]
+	ldur x5, [sp]
+	add sp, sp, #40
+	mov x3, x21
+	br lr
+
+/*
+	Inicializa arreglo donde figuran las posiciones iniciales en x de los distintos grupos de cajas
+ 
+initialize_brick_array:
+	ldr x13, =array_of_bricks
+	ldr x14, initial_br_pos //posición inicial del primer bloque
+	ldr x15, array_elem_distance
+	ldr x16, brick_array_size
+	initialize_b_loop:
+		cmp x16, #0
+		b.le end_initialize_b_loop
+		str x14, [x13, x16, lsl #3] //guardo posición en x de las cajas a pintar
+		add x14, x14, x15  //sumo la distancia a la siguiente caja
+		sub x16, x16, #1
+		b initialize_b_loop
+	end_initialize_b_loop:
+		br lr
+*/
+
+/*
+	Usa las posiciones del arreglo de bricks para pintarlos
+ */
+draw_bricks:
+	sub sp, sp, #40
+	str lr, [sp, #32]
+	str x1, [sp, #24]
+	str x2, [sp, #16]
+	str x6, [sp, #8]
+	str x7, [sp]
+	ldr x6, =array_of_bricks
+	ldr x7, brick_array_size
+	sub x7, x7, #1
+	ldr x2, brick_heigh
+	draw_brick_loop:
+		cmp x7, #0
+		b.lt end_draw_brick_loop
+		ldr x1, [x6, x7, lsl #3]
+		bl random_box
+		sub x7, x7, #1
+		b draw_brick_loop
+	end_draw_brick_loop:
+		ldur lr, [sp, #32]
+		ldur x1, [sp, #24]
+		ldur x2, [sp, #16]
+		ldur x6, [sp, #8]
+		ldur x7, [sp]
+		add sp, sp, #40
+		br lr
+
+draw_floor:
+	sub sp, sp, #40
+	str lr, [sp, #32]
+	str x1, [sp, #24]
+	str x2, [sp, #16]
+	str x6, [sp, #8]
+	str x7, [sp]
+	ldr x6, =array_of_floor
+	ldr x7, floor_array_size
+	ldr x2, floor_heigh
+	draw_floor_loop:
+		cmp x7, #0
+		b.lt end_draw_floor_loop
+		ldr x1, [x6, x7, lsl #3]
+		bl double_floor_brick
+		sub x7, x7, #1
+		b draw_floor_loop
+	end_draw_floor_loop:
+		ldur lr, [sp, #32]
+		ldur x1, [sp, #24]
+		ldur x2, [sp, #16]
+		ldur x6, [sp, #8]
+		ldur x7, [sp]
+		add sp, sp, #40
+		br lr
+
 
 
 .endif
