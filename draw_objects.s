@@ -893,15 +893,17 @@ draw_floor:
 	str x2, [sp, #16]
 	str x6, [sp, #8]
 	str x7, [sp]
-	ldr x6, =array_of_floor
-	ldr x7, floor_array_size
+	adr x6, first_floor_position
+	ldr x7, floor_elements
 	ldr x2, floor_heigh
+	ldr x1, [x6]
+	ldr x6, floor_b_size
 	draw_floor_loop:
 		cmp x7, #0
 		b.lt end_draw_floor_loop
-		ldr x1, [x6, x7, lsl #3]
 		bl double_floor_brick
 		sub x7, x7, #1
+		add x1, x1, x6
 		b draw_floor_loop
 	end_draw_floor_loop:
 		ldur lr, [sp, #32]
