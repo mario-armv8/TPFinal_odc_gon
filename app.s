@@ -14,23 +14,25 @@ prueba:
 	str x0, [x1] //la guardo en la etiqueta
 	ldr x0, =second_buffer //pongo en x0 la dirección del buffer secundario
 
+mov x15, #50
+mov x16, #100
+bl draw_pipe
+bl refresh_framebuffer
 	
-loop_prueba:
+loop_principal:
 	bl draw_backround
+	bl draw_clouds
 	bl draw_bricks
 	bl draw_floor
-	mov x1, #100
-	mov x2, #50
-	bl standar_cloud
+	//bl draw_pipe
+	bl draw_fungi
 	bl refresh_framebuffer
-	//bl move_floor
+	bl move_floor
 	bl move_bricks
+	bl move_clouds
+	bl move_fungi
 	bl delay
-	b loop_prueba
-	bl draw_floor
-	
-	ldr x0, =second_buffer
-	bl refresh_framebuffer
+	b loop_principal
 	
 
    //---------------------------------------------------------------
